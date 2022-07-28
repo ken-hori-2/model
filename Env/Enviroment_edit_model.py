@@ -223,10 +223,10 @@ def main():
     NODELIST = [
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 0],
+            [1, 1, 0, 1, 0, 0],
             [0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0]
     ]
     
@@ -260,6 +260,8 @@ def main():
         COUNT = 0
         j = 1
         BRANCH = False
+        save = 0
+        save_trigar = False
         
         print(f"state:{state}")
         STATE_HISTORY.append(state)
@@ -432,7 +434,9 @@ def main():
                                     if BPLIST[(length2-1)-test].row == state.row:
                                         
                                             BPLIST.insert((length2-1)-test+1,state)
-                                            
+                                            # save = (length2 -1) - test # + 1
+                                            save = (length2 -1) - test + 1
+                                            save_trigar = True
                                             break
 
 
@@ -457,8 +461,16 @@ def main():
                             if length > 1:
 
                                 if not state.column-1 == 0:
+                                    print("TEST :{}".format(state))
                                     if NODELIST[state.row][state.column-1] == 1:
-                                        BPLIST.pop(-2)
+                                        print("save:{}".format(save))
+                                        if save_trigar:
+                                            print("save trigar")
+                                            # BPLIST.pop(-(length - save))
+                                            BPLIST.pop(-(length + 1 - save))
+                                            save_trigar = False
+                                        else:
+                                            BPLIST.pop(-2)
                                         print("branch方向 削除後 {}".format(BPLIST))
                     
 
