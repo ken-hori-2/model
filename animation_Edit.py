@@ -10,7 +10,8 @@ class Anim():
     # def __init__(self, STATE_HISTORY):
     def __init__(self):
         
-        self.state_history = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 0], [2, 1], [2, 1], [2, 1], [2, 2], [2, 3], [2, 3], [2, 3], [2, 4], [2, 4], [2, 3], [2, 3], [2, 3], [2, 2], [2, 1], [2, 1], [2, 1], [2, 0], [2, 0], [2, 0], [3, 0], [4, 0], [4, 0], [4, 0], [4, 1], [4, 2], [4, 2], [4, 2], [4, 3], [4, 4], [4, 4], [4, 3], [4, 2], [4, 2], [4, 2], [4, 1], [4, 0], [4, 0], [4, 0]]
+        self.state_history = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 0], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [2, 3], [2, 3], [2, 3], [2, 4], [2, 5], [2, 5], [2, 4], [2, 3], [2, 3], [2, 3], [2, 2], [2, 1], [2, 0], [2, 0], [2, 0], [3, 0], [4, 0], [4, 0], [4, 0], [4, 1], [4, 1], [4, 1], [4, 2], [4, 2], [4, 2], [4, 3], [4, 4], [4, 5], [4, 5], [4, 4], [4, 3], [4, 2], [4, 2], [4, 2], [4, 1], [4, 0], [4, 0], [4, 0]]
+        self.state_history = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [2, 3], [2, 3], [2, 3], [2, 4], [2, 5], [2, 5], [2, 4], [2, 3], [2, 3], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [4, 0], [4, 1], [4, 1], [4, 1], [4, 2], [4, 2], [4, 2], [4, 3], [4, 4], [4, 5], [4, 5], [4, 4], [4, 3], [4, 2], [4, 2], [4, 1], [4, 0], [4, 0]]
 
 
         # arr = np.array(self.state_history)
@@ -29,19 +30,19 @@ class Anim():
         self.move_history()
         self.view_anim()
 
-    def data_change(self): # ここを別のリストに入れてみる
-        for i in range(len(self.state_history)):
-            if self.state_history[i] == 4:
-                self.state_history[i] = 0
-            elif self.state_history[i] == 5:
-                self.state_history[i] = -1
-            elif self.state_history[i] == 3:
-                self.state_history[i] = 1
-            elif self.state_history[i] == 2:
-                self.state_history[i] = 2
-            elif self.state_history[i] == 1:
-                self.state_history[i] = 3
-            print("Data Change !!")
+    # def data_change(self): # ここを別のリストに入れてみる
+    #     for i in range(len(self.state_history)):
+    #         if self.state_history[i] == 4:
+    #             self.state_history[i] = 0
+    #         elif self.state_history[i] == 5:
+    #             self.state_history[i] = -1
+    #         elif self.state_history[i] == 3:
+    #             self.state_history[i] = 1
+    #         elif self.state_history[i] == 2:
+    #             self.state_history[i] = 2
+    #         elif self.state_history[i] == 1:
+    #             self.state_history[i] = 3
+    #         print("Data Change !!")
 
         # return
 
@@ -149,6 +150,17 @@ class Anim():
             if t > 0:
                 prev_state = state
             state = self.state_history[t]  # 現在の場所を描く
+            try:
+                print("next state")
+                next_state = self.state_history[t+1]
+            except:
+                print("error")
+                pass
+
+            try:
+                prev2 = self.state_history[t-1]
+            except:
+                pass
             print("STATE:{}".format(state))
             print("STATE[1]:{}".format(state[1]))
 
@@ -166,10 +178,25 @@ class Anim():
             # line, = plt.plot(x, y, marker="o", color='g', markersize=20)
             # line, = plt.plot(x, y, marker="s", color='r', markersize=40, alpha = 0.5)
 
+            if state[0] > next_state[0] or state[1] > next_state[1]:
+                print("!!!!!!!!!!!!")
             try:
                 if state == prev_state:
-                    line, = plt.plot(x, y, marker="s", color='y', markersize=40, alpha = 0.5)
+                    # if state == next_state:
+                    if state[0] < next_state[0] or state[1] > next_state[1]:
+                        line, = plt.plot(x, y, marker="s", color='b', markersize=40, alpha = 0.5)
+                        # pass
+                    else:
+                        line, = plt.plot(x, y, marker="s", color='y', markersize=40, alpha = 0.5)
                 else:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    # if state[0] < next_state[0] or state[1] > next_state[1]:
+                    #     #     # print("!!!!!!!!!!!!!")
+                    #     # if state == prev2:
+                    #     #     print("prev2")
+                    #     line, = plt.plot(x, y, marker="s", color='b', markersize=40, alpha = 0.5)
+                    #     # pass
+                    # else:
                     line, = plt.plot(x, y, marker="s", color='r', markersize=40, alpha = 0.5)
             except:
                 print("エラー(初回)")

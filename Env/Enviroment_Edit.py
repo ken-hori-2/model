@@ -249,28 +249,25 @@ def main():
     for i in range(1):
         # Initialize position of agent.
         state = env.reset()
+        
+        ########## parameter ##########
         total_reward = 0
         reward = 0
         done = False
         STATE_HISTORY = []
         TRIGAR = False
-        
         BPLIST = []
         COUNT = 0
-        select_next_bp = False
-        down = False
-        afterdown = False
         j = 1
         BRANCH = False
-        FIRST = True
-        branch_first = True
-        BACK = False
-        MAX = False
+        ########## parameter ##########
+        
 
         print(f"state:{state}")
         STATE_HISTORY.append(state)
         print(f"total stress:{total_reward}")
-        print("#################")
+        # print("#################")
+        print("-----------------")
 
         while not done:
             
@@ -279,11 +276,10 @@ def main():
             next_state, reward, done = env.step(action, TRIGAR, BRANCH)
             
             
-            # if not MAX:
+            
             prev_state = state # 1つ前のステップを保存 -> 後でストレスの減少に使う
             state = next_state
-            # else:
-                # MAX = False
+            
 
 
             if TRIGAR:
@@ -485,7 +481,8 @@ def main():
             print(f"state:{state}")
             STATE_HISTORY.append(state)
             print(f"total stress:{total_reward}")
-            print("#################")
+            # print("#################")
+            print("-----------------")
 
 
 
