@@ -271,7 +271,7 @@ def main():
         print(f"state:{state}")
         STATE_HISTORY.append(state)
         print(f"total stress:{total_reward}")
-        # print("#################")
+        
         print("-----------------")
 
         while not done:
@@ -300,8 +300,7 @@ def main():
                         ##################################
                         
                         # ストレスをマイナスにさせない為に追加
-                        # print(state) # [2, 0]
-                        # print(prev_state) # [1, 0]
+                        
                         
                         if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
                             
@@ -320,7 +319,7 @@ def main():
                             if state.column == 0:
                                 BRANCH = False
                         
-                        BACK = True
+                        # BACK = True
                     else:
                         print("NEXT BP:{}".format(BPLIST[-j]))
                         print("On the way BACK")
@@ -344,75 +343,56 @@ def main():
                 
             else:
                 if not BRANCH:
+                    
+                    if NODELIST[state.row][state.column] == 1:
+                        
+                        print("NODE : ⭕️")
+                        
+                        BPLIST.append(state)
+                        STATE_HISTORY.append(state)
+
+                        #####################################
+                        STATE_HISTORY.append(state) # add0726
+                        #####################################
+                        
+                        # 一個前が1ならpopで削除
+                        print("Storage {}".format(BPLIST))
+                        length = len(BPLIST)
+
+                        
+                        if length > 1:
+                            
+                            if NODELIST[state.row+1][state.column] == 1:
+                                print("削除前 {}".format(BPLIST))
+                                BPLIST.pop(-2)
+                                print("削除後 {}".format(BPLIST))
+
+                            
+                        
+                        
+                    
+                    else: # elif NODELIST[state.row][state.column] == 0: 
+                        
+                        print("NODE : ❌")
+
+                        
+
+                    print("Δs = {}".format(reward))
+
+                    total_reward += reward
+
+                    
+                    
                     if total_reward >= 3:
-                        # ここは多分いらない
-                        
                         TRIGAR = True
-                        # # print("-----------------")
-                        # print("=================")
-                        # print("Node未発見 ->")
-                        # print("stressfull")
-                        # # print("-----------------")
-                        # print("=================")
                         
-                        continue
-                        # pass
+                        print("=================")
+                        print("FULL ! MAX! 🔙⛔️")
                         
-                    else:
-                        
-                        # print("NEXT STATE ROW :{}".format(state.row))
-                        
-                        if NODELIST[state.row][state.column] == 1:
-                            # print("Node発見")
-                            print("NODE : ⭕️")
-                            #########################
-                            BPLIST.append(state)
-                            STATE_HISTORY.append(state)
-
-                            #####################################
-                            STATE_HISTORY.append(state) # add0726
-                            #####################################
-                            
-                            # 一個前が1ならpopで削除
-                            print("Storage {}".format(BPLIST))
-                            length = len(BPLIST)
-
-                            
-                            if length > 1:
-                                
-                                if NODELIST[state.row+1][state.column] == 1:
-                                    print("削除前 {}".format(BPLIST))
-                                    BPLIST.pop(-2)
-                                    print("削除後 {}".format(BPLIST))
-
-                                
-                            #########################
-                            
-                        
-                        else: # elif NODELIST[state.row][state.column] == 0: 
-                            # print("Node未発見")
-                            print("NODE : ❌")
-
-                            
-
-                        print("Δs = {}".format(reward))
-
-                        total_reward += reward
-
-                        ######################
-                        # add 0726
-                        ######################
-                        
-                        if total_reward >= 3:
-                            TRIGAR = True
-                            # print("-----------------")
-                            print("=================")
-                            print("FULL ! MAX! 🔙⛔️")
-                            # print("-----------------")
-                            print("=================")
-                            ##################################
-                            STATE_HISTORY.append(state) # 0729
-                            ##################################
+                        print("=================")
+                        ##################################
+                        STATE_HISTORY.append(state) # 0729
+                        ##################################
                         
                 else:
                     
@@ -421,7 +401,7 @@ def main():
                     total_reward += reward
 
                     print("Δs = {}".format(reward))
-                    # print(f"S:{total_reward}")
+                    
                     
                     if total_reward >= 3:
 
@@ -431,13 +411,13 @@ def main():
                         print("分岐終了")
                         STATE_HISTORY.append(state)
                         
-                        # break
+                        
                         TRIGAR = True
-                    # add
+                    
                     else:
                         TRIGAR = False
                         if NODELIST[state.row][state.column] == 1:
-                            # print("Node発見")
+                            
                             print("NODE : ⭕️")
 
                             #####################################
@@ -449,16 +429,16 @@ def main():
                                 BPLIST.append(state)
                             else:
                                 
-                                length2 = len(BPLIST)
-                                # print("length2:{}".format(length2))
-                                for test in range (length2):
+                                length = len(BPLIST)
+                                
+                                for test in range (length):
                                     
-                                    # print("i = {}, {}".format(test, (length2-1)-test))
-                                    if BPLIST[(length2-1)-test].row == state.row:
+                                    
+                                    if BPLIST[(length-1)-test].row == state.row:
                                         
-                                            BPLIST.insert((length2-1)-test+1,state)
-                                            # save = (length2 -1) - test # + 1
-                                            save = (length2 -1) - test + 1
+                                            BPLIST.insert((length-1)-test+1,state)
+                                            
+                                            save = (length -1) - test + 1
                                             save_trigar = True
                                             break
 
@@ -477,20 +457,15 @@ def main():
                             
                             length = len(BPLIST)
 
-                            
-                            ###########################
-                            # add0726
-                            ###########################
                             if length > 1:
 
                                 if not state.column-1 == 0:
-                                    # print("TEST :{}".format(state))
+                                    
                                     if NODELIST[state.row][state.column-1] == 1:
-                                        # print("save:{}".format(save))
+                                        
                                         print("Branch方向 削除前 {}".format(BPLIST))
                                         if save_trigar:
-                                            # print("save trigar")
-                                            # BPLIST.pop(-(length - save))
+                                            
                                             BPLIST.pop(-(length + 1 - save))
                                             save_trigar = False
                                         else:
@@ -499,7 +474,7 @@ def main():
 
 
                         else: # elif NODELIST[state.row][state.column] == 0: 
-                            # print("Node未発見")
+                            
                             print("NODE : ❌")
                     
 
@@ -508,11 +483,11 @@ def main():
 
 
 
-            # STATE_HISTORY.append(state)
+            
             print(f"State:{state}")
             STATE_HISTORY.append(state)
             print(f"Total Stress:{total_reward}")
-            # print("#################")
+            
             print("-----------------")
 
 
