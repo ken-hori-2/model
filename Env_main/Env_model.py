@@ -5,6 +5,8 @@ import random
 # Enviroment_Edit.py の整理ver.
 # Enviroment_edit_model.py の整理ver.
 
+# 使っているアニメーション -> Env_anim_Edit.py
+
 
 class State():
 
@@ -383,7 +385,7 @@ def main():
                             ############################
                             # 一個前が1ならpopで削除
                             length = len(BPLIST)
-                            
+
                             if length > 1:
                                 if not state.column-1 == 0:
                                     if NODELIST[state.row][state.column-1] == 1:
