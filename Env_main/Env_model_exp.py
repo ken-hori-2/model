@@ -1,4 +1,5 @@
 from enum import Enum
+from tkinter import FIRST
 import numpy as np
 import random
 
@@ -216,21 +217,21 @@ def main():
     NODELIST = [
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 0],
+            [1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0]
     ]
     
     grid = [
-        [0, 9, 0, 0, 0, 0],
-        [0, 9, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
-        [0, 9, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
-        [0, 9, 0, 0, 0, 0],
-        [0, 9, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
     ]
     env = Environment(grid, NODELIST)
     agent = Agent(env)
@@ -258,6 +259,8 @@ def main():
         BRANCH = False
         save = 0
         save_trigar = False
+        FIRST = True
+        Stressfull = 1 #3
         ########## parameter ##########
         
         print("\n----Init Pose----")
@@ -265,6 +268,8 @@ def main():
         STATE_HISTORY.append(state)
         print(f"Total Stress:{total_stress}")
         # print("-----------------")
+
+        
 
         while not done:
 
@@ -307,18 +312,33 @@ def main():
                 except:
                     print("state:{}".format(state))
                     print("これ以上戻れません。 終了します。")
-                    break
+                    # ストレスをマイナスにさせない為に追加
+                    if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                        if total_stress + stress >= 0:
+                            total_stress += stress
+                    # break
                     # 以下は繰り返す場合
-                    total_stress = 0
+                    # total_stress = 0
                     j = 1
+                    Stressfull += 1
                     TRIGAR = False
-                    BPLIST.clear()
+                    
+                    # Edit 0729
+                    BPLIST.clear() # 🌏これをするなら、State[5, 0] = 1にしないといけない　&& 以下の add0729 は消す
+
+                    continue # State[6, 0]に戻るのを防ぐ
             else:
+                # 🌏BPLIST start地点を追加 add0729
+                # if FIRST:
+                #     BPLIST.append(state)
+                #     FIRST = False
+                ###########################
+
                 if not BRANCH:
                     
                     if NODELIST[state.row][state.column] == 1:
                         
-                        print("NODE : ⭕️")
+                        print("🪧NODE : ⭕️")
                         BPLIST.append(state)
                         STATE_HISTORY.append(state)
 
@@ -327,7 +347,7 @@ def main():
                         #####################################
                         
                         # 一個前が1ならpopで削除
-                        print("Storage {}".format(BPLIST))
+                        print("📂Storage {}".format(BPLIST))
                         length = len(BPLIST)
 
                         if length > 1:
@@ -336,12 +356,12 @@ def main():
                                 BPLIST.pop(-2)
                                 print("削除後 {}".format(BPLIST))
                     else: # elif NODELIST[state.row][state.column] == 0: 
-                        print("NODE : ❌")
+                        print("🪧NODE : ❌")
 
                     print("Δs = {}".format(stress))
                     total_stress += stress
 
-                    if total_stress >= 3:
+                    if total_stress >= Stressfull:
                         TRIGAR = True
                         print("=================")
                         print("FULL ! MAX! 🔙⛔️")
@@ -353,7 +373,7 @@ def main():
                     total_stress += stress
                     print("Δs = {}".format(stress))
 
-                    if total_stress >= 3:
+                    if total_stress >= Stressfull:
                         print("=================")
                         print("FULL ! MAX! 🔙⛔️")
                         print("=================")
@@ -364,7 +384,7 @@ def main():
                         TRIGAR = False
 
                         if NODELIST[state.row][state.column] == 1:
-                            print("NODE : ⭕️")
+                            print("🪧NODE : ⭕️")
                             #####################################
                             STATE_HISTORY.append(state) # add0726
                             #####################################
@@ -379,7 +399,7 @@ def main():
                                         save_trigar = True
                                         break
 
-                            print(f"Storage:{BPLIST}")
+                            print(f"📂Storage:{BPLIST}")
                             STATE_HISTORY.append(state)
                             
                             ############################
@@ -399,16 +419,17 @@ def main():
                                             BPLIST.pop(-2)
                                         print("Branch方向 削除後 {}".format(BPLIST))
                         else: # elif NODELIST[state.row][state.column] == 0: 
-                            print("NODE : ❌")
+                            print("🪧NODE : ❌")
             
-            print(f"State:{state}")
+            # print(f"🌏🤖State:{state}")
+            print(f"🤖State:{state}")
             STATE_HISTORY.append(state)
             print(f"Total Stress:{total_stress}")
             # print("-----------------")
             
             COUNT += 1
-            # if COUNT > 30:
-            #     break
+            if COUNT > 50:
+                break
             
         print("Episode {}: Agent gets {} stress.".format(i, total_stress))
         print("state_history : {}".format(STATE_HISTORY))

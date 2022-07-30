@@ -18,17 +18,18 @@ class Anim():
 
     def view_plot_text(self):
         # 状態を示す文字S0～S8を描く
-        plt.text(0.2, -0.5, ':(s0)', size=10, ha='center')
-        plt.text(0.2, 1.5, 'S0', size=10, ha='center')
-        plt.text(0.2, 3.5, 'S1', size=10, ha='center')
-        plt.text(0.2, 5.5, 'S2', size=10, ha='center')
-        plt.text(0.2, 7.5, 'S3', size=10, ha='center')
-        plt.text(0.2, 9.5, 'S4', size=10, ha='center')
-        plt.text(0.2, 11.5, 'S5', size=10, ha='center')
+        plt.text(0.2, -0.5, 'S0', size=10, ha='center')
+        plt.text(0.2, 1.5, 'S1', size=10, ha='center')
+        plt.text(0.2, 3.5, 'S2', size=10, ha='center')
+        plt.text(0.2, 5.5, 'S3', size=10, ha='center')
+        plt.text(0.2, 7.5, 'S4', size=10, ha='center')
+        plt.text(0.2, 9.5, 'S5', size=10, ha='center')
+        plt.text(0.2, 11.5, 'S6', size=10, ha='center')
         
         plt.plot([0.5, 0.5], [0.0, 14.5], color="black")
-        plt.plot([0.0, 10.5], [3.5, 3.5], color="black")
-        plt.plot([0.0, 10.5], [7.5, 7.5], color="black")
+        plt.plot([0.0, 10.5], [1.5, 1.5], color="black")
+        # plt.plot([0.0, 10.5], [3.5, 3.5], color="black")
+        # plt.plot([0.0, 10.5], [7.5, 7.5], color="black")
         
         plt.plot([0.5], [-0.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [1.5], marker="s", color='grey', markersize=40)
@@ -37,6 +38,12 @@ class Anim():
         plt.plot([0.5], [7.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [9.5], marker="s", color='grey', markersize=40)
         plt.plot([0.5], [11.5], marker="s", color='grey', markersize=40)
+
+        plt.text(2.5, 1.5, 'S11', size=10, ha='center')
+        plt.text(4.5, 1.5, 'S12', size=10, ha='center')
+        plt.text(6.5, 1.5, 'S13', size=10, ha='center')
+        plt.text(8.5, 1.5, 'S14', size=10, ha='center')
+        plt.text(10.5, 1.5, 'S15', size=10, ha='center')
         
         plt.text(2.5, 3.5, 'S21', size=10, ha='center')
         plt.text(4.5, 3.5, 'S22', size=10, ha='center')
@@ -80,11 +87,11 @@ class Anim():
         plt.plot([8.5], [3.5], marker="s", color='grey', markersize=40)
         plt.plot([10.5], [3.5], marker="s", color='grey', markersize=40)
 
-        plt.plot([2.5], [1.5], marker="s", color='black', markersize=40)
-        plt.plot([4.5], [1.5], marker="s", color='black', markersize=40)
-        plt.plot([6.5], [1.5], marker="s", color='black', markersize=40)
-        plt.plot([8.5], [1.5], marker="s", color='black', markersize=40)
-        plt.plot([10.5], [1.5], marker="s", color='black', markersize=40)
+        plt.plot([2.5], [1.5], marker="s", color='grey', markersize=40)
+        plt.plot([4.5], [1.5], marker="s", color='grey', markersize=40)
+        plt.plot([6.5], [1.5], marker="s", color='grey', markersize=40)
+        plt.plot([8.5], [1.5], marker="s", color='grey', markersize=40)
+        plt.plot([10.5], [1.5], marker="s", color='grey', markersize=40)
 
         plt.plot([2.5], [-0.5], marker="s", color='black', markersize=40)
         plt.plot([4.5], [-0.5], marker="s", color='black', markersize=40)
@@ -157,17 +164,16 @@ class Anim():
 
 
     def view_anim(self): #　初期化関数とフレームごとの描画関数を用いて動画を作成する
-        self.anim = animation.ArtistAnimation(self.fig, self.ims, interval=350, repeat = True)
+        self.anim = animation.ArtistAnimation(self.fig, self.ims, interval=350, repeat = False)
         plt.show()
         return True
 
 
 if __name__ == "__main__":
 
-    STATE_HISTORY = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [2, 3], [2, 3], [2, 3], [2, 4], [2, 5], [2, 5], [2, 4], [2, 3], [2, 3], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [4, 0], [4, 1], [4, 1], [4, 1], [4, 2], [4, 2], [4, 2], [4, 3], [4, 4], [4, 5], [4, 5], [4, 4], [4, 3], [4, 2], [4, 2], [4, 1], [4, 0], [4, 0]]
-    STATE_HISTORY = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [2, 3], [2, 3], [2, 3], [2, 4], [2, 5], [2, 5], [2, 4], [2, 3], [2, 3], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [4, 0], [4, 1], [4, 1], [4, 1], [4, 2], [4, 2], [4, 2], [4, 3], [4, 4], [4, 5], [4, 5], [4, 4], [4, 3], [4, 2], [4, 2], [4, 1], [4, 0], [4, 0]]
-    # exp
-    STATE_HISTORY = [[6, 0], [5, 0], [4, 0], [3, 0], [3, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 2], [5, 2], [5, 1], [5, 0], [5, 0]]
+    STATE_HISTORY = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 1], [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [3, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 2], [5, 2], [5, 1], [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 2], [5, 3], [5, 3], [5, 2], [5, 1], [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [5, 0], [5, 0]]
+
+    STATE_HISTORY = [[6, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 2], [5, 3], [5, 3], [5, 2], [5, 1], [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [2, 1], [2, 0], [2, 0], [3, 0], [4, 0], [5, 0], [5, 0], [5, 1], [5, 2], [5, 3], [5, 3], [5, 2], [5, 1], [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [4, 0], [3, 0], [2, 0], [2, 0], [2, 0], [1, 0], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1]]
     Env_Anim = Anim(STATE_HISTORY)
 
     print("STATE_HISTORY:{}".format(Env_Anim.state_history))
