@@ -11,6 +11,7 @@ import random
 
 
 # prefer(優先)は、stress -= 1 or stress = 0 することでその道を進みやすくしていた
+# N = 1 が一つもないと BPlist = []だから、戻る場所がなくて、終了してしまう
 
 
 class State():
@@ -155,7 +156,7 @@ class Environment():
         else:
             if attribute == 1:
                 # Get reward! and the game ends.
-                stress = -1 # 0                              # ここが reward = None の原因 or grid の 1->0 で解決
+                stress = 0 # -1 # 0                              # ここが reward = None の原因 or grid の 1->0 で解決
             elif attribute == 0:
                 # Get damage! and the game ends.
                 stress = self.default_stress
@@ -219,21 +220,15 @@ class Agent():
 
 def main():
     NODELIST = [
-            # [0, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [1, 0, 1, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [1, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0]
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 0, 0],
             [1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0]
+            [1, 0, 0, 0, 0, 0] # start
     ]
+    # 2D grid でゴールに辿り着くには、BPlistも分岐の数だけ増やす or 二次元にしないといけない
     
     grid = [
         [0, 0, 0, 0, 0, 0],

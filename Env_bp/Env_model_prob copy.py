@@ -9,8 +9,9 @@ import random
 # 使っているアニメーション -> Env_anim_Edit.py
 
 
-
+# ベースはEnv_model_prefer.py
 # prefer(優先)は、stress -= 1 or stress = 0 することでその道を進みやすくしていた
+# N = 1 が一つもないと BPlist = []だから、戻る場所がなくて、終了してしまう
 
 
 class State():
@@ -153,11 +154,16 @@ class Environment():
         if TRIGAR:
             stress = -self.default_stress
         else:
-            if attribute == 1:
+            # if attribute == 1:
+            #     # Get reward! and the game ends.
+            #     stress = 0 # -1 # 0                              # ここが reward = None の原因 or grid の 1->0 で解決
+            # elif attribute == 0:
+            #     # Get damage! and the game ends.
+            #     stress = self.default_stress
+            if attribute > 0.0:
                 # Get reward! and the game ends.
-                stress = -1 # 0                              # ここが reward = None の原因 or grid の 1->0 で解決
-            elif attribute == 0:
-                # Get damage! and the game ends.
+                stress = 0 # -1 # 0                              # ここが reward = None の原因 or grid の 1->0 で解決
+            else:
                 stress = self.default_stress
 
 
@@ -218,21 +224,29 @@ class Agent():
 
 
 def main():
+
+    # data = [round(0.1 * random.randint(0, 10), 2) for x in range(5)]
+    data = [round(0.1 * random.randint(1, 10), 2) for x in range(5)]
+    # print(f"data = {data}")
+    # NODELIST = [
+    #         [0, 0, 0, 1, 1, 1],
+    #         [0, 0, 0, 1, 0, 0],
+    #         [0, 0, 0, 1, 0, 0],
+    #         [1, 1, 1, 1, 0, 0],
+    #         [1, 0, 0, 0, 0, 0],
+    #         [1, 0, 0, 0, 0, 0],
+    #         [1, 0, 0, 0, 0, 0] # start
+    # ]
+    # 2D grid でゴールに辿り着くには、BPlistも分岐の数だけ増やす or 二次元にしないといけない
+
     NODELIST = [
-            # [0, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [1, 0, 1, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0],
-            # [1, 0, 0, 0, 0, 0],
-            # [0, 0, 0, 0, 0, 0]
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0]
+            [0      , 0, 0, 1, 1, 1],
+            [data[4], 0, 0, 1, 0, 0],
+            [data[3], 0, 0, 1, 0, 0],
+            [data[2], 0, 1, 1, 0, 0],
+            [data[1], 0, 0, 0, 0, 0],
+            [data[0], 0, 0, 0, 0, 0],
+            [0      , 0, 0, 0, 0, 0] # start
     ]
     
     grid = [
@@ -271,7 +285,7 @@ def main():
         save = 0
         save_trigar = False
         FIRST = True
-        Stressfull = 3#2 #1 #3
+        Stressfull = 1 #3
         ########## parameter ##########
         
         print("\n----Init Pose----")
@@ -300,31 +314,44 @@ def main():
                         STATE_HISTORY.append(state)
                         
                         # ストレスをマイナスにさせない為に追加
-                        if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                        # if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                        # probablity
+                        if NODELIST[prev_state.row][prev_state.column] == 0: # > 0.0:
                             if total_stress + stress >= 0:
                                 total_stress += stress
 
-                        if not BRANCH:
-                            BRANCH = True
-                            TRIGAR = False
-                        else:
-                            j += 1
+                        ###################
+                        # コメントアウト0806
+                        # if not BRANCH:
+                        #     BRANCH = True
+                        #     TRIGAR = False
+                        # else:
+                        #     j += 1
                             
-                            if state.column == 0:
-                                BRANCH = False
+                        #     if state.column == 0:
+                        #         BRANCH = False
+                        # コメントアウト0806
+                        j += 1
+                        # コメントアウト0806
+                        ###################
+
                     else:
                         print("NEXT BP:{}".format(BPLIST[-j]))
                         print("On the way BACK")
 
                         # ストレスをマイナスにさせない為に追加
-                        if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                        # if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                        # probablity
+                        if NODELIST[prev_state.row][prev_state.column] == 0: # > 0.0:
                             if total_stress + stress >= 0:
                                 total_stress += stress
                 except:
                     print("state:{}".format(state))
                     print("これ以上戻れません。 終了します。")
                     # ストレスをマイナスにさせない為に追加
-                    if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                    # if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
+                    # probablity
+                    if NODELIST[prev_state.row][prev_state.column] == 0: # > 0.0:
                         if total_stress + stress >= 0:
                             total_stress += stress
 
@@ -349,7 +376,8 @@ def main():
 
                 if not BRANCH:
                     
-                    if NODELIST[state.row][state.column] == 1:
+                    # if NODELIST[state.row][state.column] == 1:
+                    if NODELIST[state.row][state.column] > 0.0:
                         
                         print("🪧NODE : ⭕️")
                         BPLIST.append(state)
@@ -363,11 +391,15 @@ def main():
                         print("📂Storage {}".format(BPLIST))
                         length = len(BPLIST)
 
-                        if length > 1:
-                            if NODELIST[state.row+1][state.column] == 1:
-                                print("削除前 {}".format(BPLIST))
-                                BPLIST.pop(-2)
-                                print("削除後 {}".format(BPLIST))
+                        # コメントアウト 0806
+                        # if length > 1:
+                        #     # if NODELIST[state.row+1][state.column] == 1:
+                        #     if NODELIST[state.row][state.column] > 0.0:
+                        #         print("削除前 {}".format(BPLIST))
+                        #         BPLIST.pop(-2)
+                        #         print("削除後 {}".format(BPLIST))
+                        # コメントアウト 0806
+
                     else: # elif NODELIST[state.row][state.column] == 0: 
                         print("🪧NODE : ❌")
 
@@ -404,7 +436,8 @@ def main():
                     else:
                         TRIGAR = False
 
-                        if NODELIST[state.row][state.column] == 1:
+                        # if NODELIST[state.row][state.column] == 1:
+                        if NODELIST[state.row][state.column] > 0.0:
                             print("🪧NODE : ⭕️")
                             #####################################
                             STATE_HISTORY.append(state) # add0726
@@ -429,16 +462,20 @@ def main():
                             # 一個前が1ならpopで削除
                             length = len(BPLIST)
 
-                            if length > 1:
-                                if not state.column-1 == 0:
-                                    if NODELIST[state.row][state.column-1] == 1:
-                                        print("Branch方向 削除前 {}".format(BPLIST))
-                                        if save_trigar:
-                                            BPLIST.pop(-(length + 1 - save))
-                                            save_trigar = False
-                                        else:
-                                            BPLIST.pop(-2)
-                                        print("Branch方向 削除後 {}".format(BPLIST))
+                            # コメントアウト 0806
+                            # if length > 1:
+                            #     if not state.column-1 == 0:
+                            #         # if NODELIST[state.row][state.column-1] == 1:
+                            #         if NODELIST[state.row][state.column] > 0.0:
+                            #             print("Branch方向 削除前 {}".format(BPLIST))
+                            #             if save_trigar:
+                            #                 BPLIST.pop(-(length + 1 - save))
+                            #                 save_trigar = False
+                            #             else:
+                            #                 BPLIST.pop(-2)
+                            #             print("Branch方向 削除後 {}".format(BPLIST))
+                            # コメントアウト 0806
+                            
                         else: # elif NODELIST[state.row][state.column] == 0: 
                             print("🪧NODE : ❌")
             
@@ -452,6 +489,7 @@ def main():
             if COUNT > 50:
                 break
             
+        print(f"data = {data}")
         print("Episode {}: Agent gets {} stress.".format(i, total_stress))
         print("state_history : {}".format(STATE_HISTORY))
 
