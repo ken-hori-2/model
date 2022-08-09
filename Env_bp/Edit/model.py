@@ -3,6 +3,8 @@ from tkinter import FIRST
 import numpy as np
 import random
 
+from sklearn import preprocessing
+
 # Enviroment_Edit.py の整理ver.
 # Enviroment_edit_model.py の整理ver.
 
@@ -12,6 +14,9 @@ import random
 # ベースはEnv_model_prefer.py
 # prefer(優先)は、stress -= 1 or stress = 0 することでその道を進みやすくしていた
 # N = 1 が一つもないと BPlist = []だから、戻る場所がなくて、終了してしまう
+
+
+# Env_bp/Env_model_prob_bp_2_Edit(match+cost).py の整理ver.
 
 
 class State():
@@ -337,12 +342,35 @@ def main():
                         print(f"1/Arc = {Arc_INVERSE}")
                         ##### WEIGHT CROSS で割っているので要らない
 
-                        WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
+                        # add 0808 正規化
+                        w = np.round(preprocessing.minmax_scale(w), 3)
+                        Arc = np.round(preprocessing.minmax_scale(Arc), 3)
+
+                        
+
+
+                        Arc_INVERSE = np.round(preprocessing.minmax_scale(Arc_INVERSE), 3)
+                        print("正規化 w : {}, Arc : {}".format(w, Arc))
+                        print("正規化 w : {}, Arc_INVERSE : {}".format(w, Arc_INVERSE))
+
+                        # Arc = [0, 0]の時,Arc = [1, 1]に変更
+                        if all(elem  == 0 for elem in Arc_INVERSE):
+                            Arc_INVERSE = [1 for elem in Arc_INVERSE]
+                            print("正規化 Arc = [0, 0]の時　Arc_INVERSE : {}".format(Arc_INVERSE))
+                        if all(elem  == 0 for elem in w):
+                            w = [1 for elem in w]
+                            print("正規化 WEIGHT = [0, 0]の時　WEIGHT1 : {}".format(w))
+                        
+                        # WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
+                        WEIGHT_CROSS = [round(x*y, 3) for x,y in zip(w,Arc_INVERSE)]
                         print("WEIGHT CROSS:{}".format(WEIGHT_CROSS))
                         # 歪んだサイコロを1000回振ってサンプルを得る
                         # next_position = random.choices(BPLIST, k = 1, weights = w)
                         # next_position = random.choices(BPLIST, k = 1, weights = Arc_INVERSE)
-                        next_position = random.choices(BPLIST, k = 1, weights = WEIGHT_CROSS)
+                        # next_position = random.choices(BPLIST, k = 1, weights = WEIGHT_CROSS)
+                        # next_position = BPLIST[w.index(max(w))]
+                        next_position = BPLIST[WEIGHT_CROSS.index(max(WEIGHT_CROSS))]
+                        print("next_position : {}".format(next_position))
                         
                         
 
@@ -354,7 +382,8 @@ def main():
                     
 
                 
-                if int(state.row) < int(next_position[0].row):
+                # if int(state.row) < int(next_position[0].row):
+                if int(state.row) < int(next_position.row):
                     
                     TRIGAR2 = False
                     
@@ -362,10 +391,12 @@ def main():
                     
                 try:
                     
-                    if state == next_position[0]:
+                    # if state == next_position[0]:
+                    if state == next_position:
 
                         # prob.remove(prob[prob.index(next_position[0][0])])
-                        bpindex = BPLIST.index(next_position[0])
+                        # bpindex = BPLIST.index(next_position[0])
+                        bpindex = BPLIST.index(next_position)
                         # [Arc.append(abs(BPLIST[bpindex].row-BPLIST[x].row)) for x in range(len(BPLIST))]
                         Arc = [(abs(BPLIST[bpindex].row-BPLIST[x].row)) for x in range(len(BPLIST))]
                         print("Arc:{}".format(Arc))
@@ -373,7 +404,8 @@ def main():
                         Arc.pop(index)
                         print("Arc:{}".format(Arc))
 
-                        BPLIST.remove(next_position[0])
+                        # BPLIST.remove(next_position[0])
+                        BPLIST.remove(next_position)
                         # print("BPLIST(remove):{}".format(BPLIST))
                         print("📂Storage(remove) {}".format(BPLIST))
 
@@ -381,7 +413,8 @@ def main():
                         BACK2 =True
 
                         # w.remove(w[w.index(next_position[0][0])])
-                        w.pop(bpindex)
+                        # w.pop(bpindex)
+                        w = np.delete(w, bpindex)  # 削除できていない Arcは毎回入れ直しているからpopが使える
                         print("🥌WEIGHT(remove):{}\n".format(w))
                         # Arc.pop(bpindex)
 
@@ -466,19 +499,39 @@ def main():
                         print(f"1/Arc = {Arc_INVERSE}")
                         ##### WEIGHT CROSS で割っているので要らない
 
-                        WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
+                        # add 0808 正規化
+                        w = np.round(preprocessing.minmax_scale(w), 3)
+                        Arc = np.round(preprocessing.minmax_scale(Arc), 3)
+                        Arc_INVERSE = np.round(preprocessing.minmax_scale(Arc_INVERSE), 3)
+                        print("正規化 w : {}, Arc : {}".format(w, Arc))
+                        print("正規化 w : {}, Arc_INVERSE : {}".format(w, Arc_INVERSE))
+
+                        # Arc = [0, 0]の時,Arc = [1, 1]に変更
+                        if all(elem  == 0 for elem in Arc_INVERSE):
+                            Arc_INVERSE = [1 for elem in Arc_INVERSE]
+                            print("正規化 Arc = [0, 0]の時　Arc_INVERSE : {}".format(Arc_INVERSE))
+                        if all(elem  == 0 for elem in w):
+                            w = [1 for elem in w]
+                            print("正規化 WEIGHT = [0, 0]の時　WEIGHT2 : {}".format(w))
+
+                        # WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
+                        WEIGHT_CROSS = [round(x*y, 3) for x,y in zip(w,Arc_INVERSE)]
                         print("WEIGHT CROSS:{}".format(WEIGHT_CROSS))
                         # 歪んだサイコロを1000回振ってサンプルを得る
                         # next_position = random.choices(BPLIST, k = 1, weights = w)
                         # next_position = random.choices(BPLIST, k = 1, weights = Arc_INVERSE)
-                        next_position = random.choices(BPLIST, k = 1, weights = WEIGHT_CROSS)
+                        # next_position = random.choices(BPLIST, k = 1, weights = WEIGHT_CROSS)
+                        # next_position = BPLIST[w.index(max(w))]
+                        next_position = BPLIST[WEIGHT_CROSS.index(max(WEIGHT_CROSS))]
+                        print("next_position : {}".format(next_position))
 
                         
                     except:
                         print("ERROR!")
                         # STATE_HISTORY.append(state)
                         break
-                print(f"⚠️ NEXT POSITION:{next_position[0]}")
+                # print(f"⚠️ NEXT POSITION:{next_position[0]}")
+                print(f"⚠️ NEXT POSITION:{next_position}")
                 # print("BPLIST:{}".format(BPLIST))
 
                 # print("PROB(arc)  :{}".format(prob)) コメントアウト0807
@@ -489,17 +542,20 @@ def main():
 
                 
 
-                if int(state.row) > int(next_position[0].row):
+                # if int(state.row) > int(next_position[0].row):
+                if int(state.row) > int(next_position.row):
                     
                     TRIGAR2 = True
                     
 
                 try:
                     
-                    if state == next_position[0]:
+                    # if state == next_position[0]:
+                    if state == next_position:
 
                         # prob.remove(prob[prob.index(next_position[0][0])])
-                        bpindex = BPLIST.index(next_position[0])
+                        # bpindex = BPLIST.index(next_position[0])
+                        bpindex = BPLIST.index(next_position)
                         # print(type(BPLIST[bpindex].row))
                         # print(type(BPLIST[0].row))
                         # [Arc.append(abs(BPLIST[bpindex].row-BPLIST[x].row)) for x in range(len(BPLIST))]
@@ -510,13 +566,15 @@ def main():
                         print("Arc:{}".format(Arc))
 
 
-                        BPLIST.remove(next_position[0])
+                        # BPLIST.remove(next_position[0])
+                        BPLIST.remove(next_position)
                         # print("BPLIST(remove):{}".format(BPLIST))
                         print("📂Storage(remove) {}".format(BPLIST))
 
                         # print(f"prob(remove):{prob}")
                         # w.remove(w[w.index(next_position[0][0])])
-                        w.pop(bpindex)
+                        # w.pop(bpindex)
+                        w = np.delete(w, bpindex)  # 削除できていない
                         print("🥌WEIGHT(remove):{}\n".format(w))
                         BACK =True
 
