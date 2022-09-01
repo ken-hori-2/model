@@ -21,7 +21,9 @@ import math
 # model_edit_2d.py の整理ver.
 # model_edit_2d_Edit.py の編集ver.
 
-# これが、分岐先もBPLISTに追加する最新ver. (0816)
+# model_edit_2d_Edit_copy.py の整理ver.
+
+# これが、分岐先もBPLISTに追加する最新ver. の整理ver. (0817)
 
 
 class State():
@@ -220,7 +222,11 @@ class Agent():
         
         if TRIGAR2:
             # print("TRIGAR2 TRUE")
-            return (self.actions[0])
+            if BRANCH:
+                print("BRANCH TRUE right 🌚 🌚 🌚")
+                return (self.actions[3]) # add0817
+            else:
+                return (self.actions[0])
         
         elif TRIGAR:
             if BRANCH:
@@ -256,13 +262,34 @@ def main():
     # ]
     NODELIST = [
             [0, 0, 0, 0, 0, 0],
-            [1*0.4, 0, 0, 0, 0, 0],
-            [1*0.9, 1, 1, 0, 0, 0],
-            [1*0.2, 0, 0, 0, 0, 0],
-            [1*0.6, 0, 0, 0, 0, 0],
-            [1*0.8, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 0, 0],
+            [1, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0] # start
     ]
+
+    NODE_COUNT = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0] # start
+    ]
+
+    TURNING_POINT = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0] # start
+    ]
+
     # NODE = 1 の時に観測結果を格納する行列
     # Observation = [
     #         [0, 0, 0, 0, 0, 0],
@@ -276,13 +303,13 @@ def main():
 
     # 🔑今は観測されている前提の簡単なやつ
     Observation = [
-            [0, 0, 0, 0, 0, 0],
-            [0.4, 0, 0, 0, 0, 0],
-            [0.9, 0.5, 0.7, 0, 0, 0],
-            [0.2, 0, 0, 0, 0, 0],
+            [0,   0,   0,   0, 0, 0],
+            [0.4, 0.9, 0.4, 0, 0, 0],
+            [0.9, 0.5, 0.7, 0.3, 0, 0], # 0.8
+            [0.2, 0.8, 0.5, 0, 0, 0],
             [0.6, 0.4, 0.6, 0, 0, 0],
-            [0.8, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0] # start
+            [0.8, 0.7, 0.3, 0, 0, 0],
+            [1,   0,   0,   0, 0, 0] # start
     ]
     print("Observation : {}".format(Observation))
     # 2D grid でゴールに辿り着くには、BPlistも分岐の数だけ増やす or 二次元にしないといけない
@@ -343,6 +370,11 @@ def main():
         BPLIST_2 = []
 
         on_the_way = False
+
+        ADD = False
+        ADD2 = False
+
+        test = False
         
         print("\n----Init Pose----")
         print(f"State:{state}")
@@ -365,6 +397,7 @@ def main():
             if TRIGAR2:
                 if BACK2:
                     print("0815 test")
+                    print("next position     BACK2:{}".format(BACK2))
                     print(Arc_INVERSE,Arc)
                     try:
                         # if bf2:
@@ -416,6 +449,17 @@ def main():
                         # WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
                         WEIGHT_CROSS = [round(x*y, 3) for x,y in zip(w,Arc_INVERSE)]
                         print("⚡️ WEIGHT CROSS:{}".format(WEIGHT_CROSS))
+
+                        # add0818
+                        # if all(elem  == 0 for elem in WEIGHT_CROSS):
+                        #     print("WEIGHT CROSSは全部0です。")
+                            
+                        #     Arc = Arc.tolist()
+                        #     print("Arc type : {}".format(type(Arc)))
+                        #     near_index = Arc.index(min(Arc))
+                        #     print("Arc:{}, index:{}".format(Arc, near_index))
+                        #     WEIGHT_CROSS[near_index] = 1
+                        #     print("⚡️ WEIGHT CROSS:{}".format(WEIGHT_CROSS))
                         # 歪んだサイコロを1000回振ってサンプルを得る
                         # next_position = random.choices(BPLIST, k = 1, weights = w)
                         # next_position = random.choices(BPLIST, k = 1, weights = Arc_INVERSE)
@@ -425,10 +469,14 @@ def main():
                         # print("next_position : {}".format(next_position))
                         print(f"========Decision Next State=======\n⚠️  NEXT POSITION:{next_position}\n==================================")
                         on_the_way = True
+                        print(f"🤖 State:{state}")
                         
                         
 
-                        BACK2 = False
+                        # どっちでもいい 0817 (おそらく二個以上戻るときに必要)
+                        # BACK2 = False
+                        # 今後の為に一応追加 (おそらく二個以上戻るときに必要)
+                        # BACK = False
                     # except:
                     except Exception as e:
                         # print('=== エラー内容 ===')
@@ -453,6 +501,18 @@ def main():
                         TRIGAR2 = False
                         
                         COUNT += 1
+                
+                
+                
+                
+                # add 0817
+                elif BRANCH:
+                    if int(state.column) > int(next_position.column):
+                        print("🌚 🌚 🌚")
+                        
+                        TRIGAR2 = False
+                        
+                        COUNT += 1
                     
                 try:
                     
@@ -469,6 +529,9 @@ def main():
 
                     # if state == next_position[0]:
                     if state == next_position:
+                        # add0819
+                        NODE_COUNT[state.row][state.column] += 1
+                        print("NODE_COUNT = {} TRIGAR2🍎".format(NODE_COUNT))
 
                         
                         # bpindex = BPLIST.index(next_position[0])
@@ -499,7 +562,7 @@ def main():
                         print("📂 OBS(remove)2     {}".format(OBS))
 
                         
-                        BACK2 =True
+                        BACK2 = True
 
                         
                         # w.pop(bpindex)
@@ -510,7 +573,7 @@ def main():
 
                         
                         # print("Arrive at BP (戻り終わりました。)")
-                        print("🔚 ARRIVE AT BACK POSITION (戻り終わりました。test)")
+                        print("🔚 ARRIVE AT BACK POSITION (戻り終わりました。test🌝)")
                         print(f"🤖 State:{state}")
                         STATE_HISTORY.append(state)
                         
@@ -532,19 +595,55 @@ def main():
                             # TRIGAR2 = False
                         else:
                             # j += 1
-                            print("分岐 FALSE!!!!!!!!!!!!!")
+                            print("分岐 FALSE!!!!!!!!!!!!! -> True のまま")
                             # BRANCH = False
-                            
-                            if state.column == 0:
-                                print("分岐 FALSE!!!!!!!!!!!!!")
+                            # TRIGAR = True
+
+                            # add 0819 BRANCH2 == UP
+                            # BRANCH2 = True
+
+                            ########################
+                            if state.column != 0:
                                 BRANCH = False
+                                TRIGAR = False
+                            ########################
+                            
+                            ####################
+                            print("🪐 🪐 🪐 🪐 🪐BACK = {}".format(BACK)) # 一回しかここには入らない
+                            "なぜか -> BRANCHの時に戻り終わった時に、周辺探索(上)を見ない為、分岐終了とならずに、BACK = True にならないから"
+                            "というか、TRIGAR の BACKには本線で初めて TRIGAR になった時のみ入る"
+                            
+                            
+                            BACK = True # add0818
+                            ####################
+                            
+                            # if state.column == 0:
+                            if state.column == next_position.column: # add0817 -> これ必要ないかも
+                                print("分岐 FALSE!!!!!!!!!!!!!")
+                                ##########
+                                # BRANCH = False add 0818
+                                ##########
 
                         if int(state.row) > int(next_position.row):
-                            print("test")
+                            print("0817 test 777777777777777777777777777777777\n")
                             
-                            TRIGAR2 = True
-                        else:
+                            TRIGAR2 = True # コメントアウト0817
+                        else: # int(state.row) <= int(next_position.row):
+                            print("0817 test 888888888888888888888888888888888\n")
+
                             TRIGAR2 = False
+
+                        
+                        # add0817
+                        if int(state.column) < int(next_position.column):
+                            print("0817 test 777777777777777777777777777777777 🌚 🌚 🌚\n")
+                            
+                            # TRIGAR2 = True # コメントアウト0817
+                        else: # int(state.row) <= int(next_position.row):
+                            print("0817 test 888888888888888888888888888888888 🌚 🌚 🌚\n")
+
+                            TRIGAR2 = False
+                        print("BRANCH : {}".format(BRANCH))
 
 
                         # add0807
@@ -558,10 +657,11 @@ def main():
                         print(f"Total Stress:{total_stress}")
                         
 
-                        action = agent.policy(state, TRIGAR, BRANCH, TRIGAR2)
-                        next_state, stress, done = env.step(action, TRIGAR, BRANCH)
-                        prev_state = state # 1つ前のステップを保存 -> 後でストレスの減少に使う
-                        state = next_state
+                        # 0817 コメントアウト
+                        # action = agent.policy(state, TRIGAR, BRANCH, TRIGAR2)
+                        # next_state, stress, done = env.step(action, TRIGAR, BRANCH)
+                        # prev_state = state # 1つ前のステップを保存 -> 後でストレスの減少に使う
+                        # state = next_state
 
                         continue
 
@@ -575,6 +675,12 @@ def main():
 
                     
                     else:
+
+
+                        if on_the_way:
+                            on_the_way = False
+                        else:
+                            print("🔛 On the way BACK")
                         
                         # ストレスをマイナスにさせない為に追加
                         # if NODELIST[prev_state.row][prev_state.column] == 0: # 1つ前の状態で０の場合1減らす 進む時、次が0の時にストレスが増えているから
@@ -672,8 +778,8 @@ def main():
                         else:
                             print(f"🥌 WEIGHT = {w}")
                             print("👟 Arc[移動コスト]:{}".format(Arc))
-                        bf = False
-                        BACK = False
+                        # bf = False
+                        # BACK = False # 下に移動↓
                         
                         # 2 つのリストの要素同士の演算
                         ##### WEIGHT CROSS で割っているので要らない
@@ -713,6 +819,16 @@ def main():
                         # WEIGHT_CROSS = [round(x/y, 3) for x,y in zip(w,Arc)]
                         WEIGHT_CROSS = [round(x*y, 3) for x,y in zip(w,Arc_INVERSE)]
                         print("⚡️ WEIGHT CROSS:{}".format(WEIGHT_CROSS))
+
+                        # add0818
+                        # if all(elem  == 0 for elem in WEIGHT_CROSS):
+                        #     print("\nWEIGHT CROSSは全部0です。1")
+                        #     Arc = Arc.tolist()
+                        #     print("Arc type : {}".format(type(Arc)))
+                        #     near_index = Arc.index(min(Arc))
+                        #     print("Arc:{}, index:{}".format(Arc, near_index))
+                        #     WEIGHT_CROSS[near_index] = 1
+                        #     print("⚡️ WEIGHT CROSS:{}".format(WEIGHT_CROSS))
                         # 歪んだサイコロを1000回振ってサンプルを得る
                         # next_position = random.choices(BPLIST, k = 1, weights = w)
                         # next_position = random.choices(BPLIST, k = 1, weights = Arc_INVERSE)
@@ -722,6 +838,13 @@ def main():
                         # print("next_position : {}".format(next_position))
                         print(f"========Decision Next State=======\n⚠️  NEXT POSITION:{next_position}\n==================================")
                         on_the_way = True
+                        print(f"🤖 State:{state}")
+
+                        bf = False
+                        BACK = False
+                        # add0817
+                        BACK2 = False
+                        
 
                         
                     # except:
@@ -736,6 +859,7 @@ def main():
                         print("🔚 ARRIVE AT BACK POSITION (戻り終わりました。test)")
                         print(f"🤖 State:{state}")
                         STATE_HISTORY.append(state) # 0815
+                        # STATE_HISTORY.append(prev_state) # 0817
                         break
 
                     # print(f"🤖 State:{state}")
@@ -743,16 +867,22 @@ def main():
                 
                 print("next position")
                 # if int(state.row) > int(next_position[0].row):
-                if not BRANCH: # add0814
-                    if int(state.row) > int(next_position.row):
-                        print("これが出ていればここが問題 trigar1")
+
+                
+                # 0817 コメントアウト
+                # if not BRANCH: # add0814
+                #     if int(state.row) > int(next_position.row):
+                #         print("これが出ていればここが問題 trigar1")
                         
-                        TRIGAR2 = True
+                #         TRIGAR2 = True
                         
                 try:
                     
                     # if state == next_position[0]:
                     if state == next_position:
+                        # add0819
+                        NODE_COUNT[state.row][state.column] += 1
+                        print("NODE_COUNT = {} TRIAGR🍏".format(NODE_COUNT))
 
                         
                         # 0816
@@ -760,17 +890,19 @@ def main():
                         # 
                         # 
                         # # bpindex = BPLIST.index(next_position[0])
-                        bpindex = BPLIST.index(next_position)
-                        print("bpindex:{}".format(bpindex))
-                        # S = state.tolist()
-                        print("type:{}".format(type(BPLIST)))
-                        print("type:{}".format(type(bpindex)))
-                        print("type:{}".format((BPLIST[bpindex].row)))
-                        print("📂 Storage {}".format(BPLIST))
-                        print("bpindex:{}".format(BPLIST[bpindex]))
-                        print(BPLIST[0].row)
-                        print(BPLIST[bpindex].row, BPLIST[bpindex].column)
-                        print(BPLIST[0].row, BPLIST[0].column)
+                        bpindex = BPLIST.index(next_position) 
+                        "次に戻る場所がない(BPLIST = [])とここでエラーが出るので、L576で BACK = True にすることで、next position を設定し直す"
+                        
+                        # print("bpindex:{}".format(bpindex))
+                        # # S = state.tolist()
+                        # print("type:{}".format(type(BPLIST)))
+                        # print("type:{}".format(type(bpindex)))
+                        # print("type:{}".format((BPLIST[bpindex].row)))
+                        # print("📂 Storage {}".format(BPLIST))
+                        # print("bpindex:{}".format(BPLIST[bpindex]))
+                        # print(BPLIST[0].row)
+                        # print(BPLIST[bpindex].row, BPLIST[bpindex].column)
+                        # print(BPLIST[0].row, BPLIST[0].column)
                         
                         # [Arc.append(abs(BPLIST[bpindex].row-BPLIST[x].row)) for x in range(len(BPLIST))]
                         if not BRANCH:
@@ -813,12 +945,12 @@ def main():
                         # w = np.delete(w, bpindex)  # 削除できていない
                         w = OBS # add0816
                         print("🥌 WEIGHT(remove):{}".format(w))
-                        BACK =True
+                        BACK = True
 
 
                         
                         # print("Arrive at BP (戻り終わりました。)!!!!!!!!!!!!")
-                        print("🔚 ARRIVE AT BACK POSITION (戻り終わりました。)")
+                        print("🔚 ARRIVE AT BACK POSITION (戻り終わりました。)🐬")
                         BACK3 = True
 
                         print(f"🤖 State:{state}")
@@ -854,11 +986,35 @@ def main():
                             # j += 1
                             print("分岐 FALSE")
                             # BRANCH = False
-                            
-                            if state.column == 0:
+
+                            # add 0819 BRANCH2 == UP
+                            # BRANCH2 = True
+
+                            ########################
+                            if state.column != 0:
                                 BRANCH = False
+                                TRIGAR = False
+                            ########################
+                            
+                            # if state.column == 0:
+                            if state.column == next_position.column:
+                                BRANCH = False
+                                # add0819
+                                # TRIGAR = True
+
+                        print("TRIGAR={}, TRIGAR2={}, BRANCH={}".format(TRIGAR, TRIGAR2, BRANCH))
                         # add0807 これがないと通り過ぎてしまう(戻り過ぎる)
-                        # continue  # コメントアウト0816
+                        continue  # コメントアウト0816 + 0817
+
+
+
+
+
+
+
+
+
+
 
 
                         # print(f"🥌 WEIGHT = {OBS}")
@@ -873,9 +1029,22 @@ def main():
                     else:
                         
                         # add 0814
-                        if state.column == 0:
-                            BRANCH = False
+
+                        # 分岐から本線に戻ってきた時に、BRANCH = Falseにする + nextが上ならTRIGAR2 = Trueにする
+                        # if state.column == 0:
+                        print("🌕 next position column : {}, BRANCH : {} 🌟".format(next_position.column, BRANCH))
+
+
+                        if state.column == next_position.column: # 🌝重要 0818 今は本線がcolumn = 0 の時だから、0の時のみ上に上がれる
+                            print("🌕")
+                            BRANCH = False # Falseにすると、いずれ同じ行の分岐の位置にあるときに破綻する(column = column ... [2, 3] と [1, 3] のような関係)
+
+
+
+
+                            
                             # TRIGAR = False
+                            print("state row : {}, next row : {}".format(int(state.row), int(next_position.row)))
                             if int(state.row) > int(next_position.row):
                                 print("これが出ていればここが問題 trigar1 test")
                                 print("TRIGAR:{} TRIGAR2:{} BRANCH:{}".format(TRIGAR, TRIGAR2, BRANCH))
@@ -884,11 +1053,80 @@ def main():
                             else:
                                 TRIGAR2 = False
 
+                        ####################### add 0818 #######################
+                        elif state.column == 0:
+                            BRANCH = False
+                            if int(state.row) > int(next_position.row):
+                                print("0818 test 🌝 🌝 🌝 🌝 🌝")
+                                print("TRIGAR:{} TRIGAR2:{} BRANCH:{}".format(TRIGAR, TRIGAR2, BRANCH))
+                                
+                                TRIGAR2 = True
+                            else:
+                                print("TRIGAR2 False 🌝 🌝 🌝 🌝 🌝")
+                                TRIGAR2 = False
+                        ####################### add 0818 #######################
+
+                        print("\nTRIGAR2 : {}".format(TRIGAR2))
+                        print("on the way : {}".format(on_the_way))
+
+                        # 分岐している時に、nextが右ならTRIGAR3 = Trueにする
+                        if state.row == next_position.row:
+                            print("next position row : {}".format(next_position.row))
+                            BRANCH = True # add0818 ここでBRANCH = True にしているので、上でBRANCH = False になっても、next position が分岐先の時は(state row == next position row)分岐できる
+                            # TRIGAR = False
+                            print("$$$$$$$$$$$$$$$ 🌚 🌚 🌚 $$$$$$$$$$$$$$$$$ state.row == next_position.row")
+                            if int(state.column) < int(next_position.column):
+                                print("これが出ていればここが問題 trigar3 test")
+                                print("TRIGAR:{} TRIGAR2:{} BRANCH:{}".format(TRIGAR, TRIGAR2, BRANCH))
+                                
+                                # TRIGAR3 = True
+                                TRIGAR2 = True
+                            else:
+                                # TRIGAR3 = False
+                                TRIGAR2 = False
+
+                                print("TEST 🍋")
+
+                                # add0819
+                                # 今だけの解決策
+                                # if TURNING_POINT[next_position.row][next_position.column] == 1:
+                                print(state.row, state.column, next_position.row, next_position.column)
+                                # add0820
+                                # if TURNING_POINT[state.row][0] != 1: # True
+                                #     print("TEST 0820 🍊")
+                                #     BRANCH = False
+                                #     test = True
+                                # add0820
+
+                                # if state == [1, 1]:
+                                #     print("TEST 0820 🍊")
+                                #     if next_position == [1, 0]:
+                                #         print("TEST 0820 🍊🍊")
+                                #         BRANCH = False
+                                #         TRIGAR = True
+                                #         # continue
+                                # if state.row == 1 and state.column == 1:
+                                #     print("TEST 0820 🍊")
+                                #     if next_position.row == 1 and next_position.column == 0:
+                                #         print("TEST 0820 🍊🍊")
+                                #         BRANCH = False
+                                #         TRIGAR = True
+                                #         # continue
+
+                        # add0820
+                        # if TURNING_POINT[state.row][0] == 1: #  and test:
+                        #     print("TEST 0820 🍊🍊")
+                        #     BRANCH = True
+                        #     if state.row == next_position.row:
+                        #         BRANCH = False
+
+                            
+
 
                         if on_the_way:
                             on_the_way = False
                         else:
-                            print("🔛 On the way BACK")
+                            print("🔛 On the way BACK 🌟")
                             
 
                         # ストレスをマイナスにさせない為に追加
@@ -899,11 +1137,11 @@ def main():
                                 total_stress += stress
                 # except:
                 except Exception as e:
-                    print('=== エラー内容 ===')
-                    print('type:' + str(type(e)))
-                    print('args:' + str(e.args))
-                    print('message:' + e.message)
-                    print('e自身:' + str(e))
+                    # print('=== エラー内容 ===')
+                    # print('type:' + str(type(e)))
+                    # print('args:' + str(e.args))
+                    # print('message:' + e.message)
+                    # print('e自身:' + str(e))
 
                     print("state:{}".format(state))
                     print("これ以上戻れません。 終了します。!")
@@ -932,25 +1170,35 @@ def main():
                     
                     # if NODELIST[state.row][state.column] == 1:
                     if NODELIST[state.row][state.column] > 0.0:
-                        ################################################
-                        ################################################
-                        # 本当はここで見つけた時に、現場情報のリストに格納していく
-
-                        # model_edit_observation はここをコメントアウト↓
-                        # Observation[state.row][state.column] = round(0.1 * random.randint(1, 10), 2) # 🔑今は観測されている前提の簡単なやつ
-                        print("Observation : {}".format(Observation))
-                        OBS.append(Observation[state.row][state.column])
-                        print("OBS : {}".format(OBS))
-                        # 本当はここで見つけた時に、現場情報のリストに格納していく
-                        # PROB.append(NODELIST[state.row][state.column]) # 今は仮にこれを使う
-                        ################################################
-                        ################################################
-                        
                         print("🪧 NODE : ⭕️")
-                        BPLIST.append(state)
+                        if NODE_COUNT[state.row][state.column] < 1: # < 2: # 1回目の時は　BPLIST に追加
+                            print("初めて観測")
+                            ################################################
+                            ################################################
+                            # 本当はここで見つけた時に、現場情報のリストに格納していく
 
-                        # PROB.append(NODELIST[state.row][state.column])
-                        # PROB.append(round(0.1 * random.randint(1, 10), 2))
+                            # model_edit_observation はここをコメントアウト↓
+                            # Observation[state.row][state.column] = round(0.1 * random.randint(1, 10), 2) # 🔑今は観測されている前提の簡単なやつ
+                            print("Observation : {}".format(Observation))
+                            OBS.append(Observation[state.row][state.column])
+                            print("OBS : {}".format(OBS))
+                            # 本当はここで見つけた時に、現場情報のリストに格納していく
+                            # PROB.append(NODELIST[state.row][state.column]) # 今は仮にこれを使う
+                            ################################################
+                            ################################################
+                            
+                            # print("🪧 NODE : ⭕️")
+                            BPLIST.append(state)
+
+                            # PROB.append(NODELIST[state.row][state.column])
+                            # PROB.append(round(0.1 * random.randint(1, 10), 2))
+                        
+                        
+                        # add0820
+                        elif TURNING_POINT[state.row][state.column] == 1:
+                            print("TURNING POINT 🚦 🚦 🚦")
+                            BPLIST.append(state)
+                        # add0820
 
 
                         STATE_HISTORY.append(state)
@@ -988,7 +1236,7 @@ def main():
                     if total_stress >= Stressfull:
                         TRIGAR = True
                         print("=================")
-                        print("FULL ! MAX! 🔙⛔️")
+                        print("FULL ! MAX! 🔙⛔️⭐️")
                         print("=================")
                         ##################################
                         STATE_HISTORY.append(state) # 0729
@@ -1003,7 +1251,11 @@ def main():
 
 
 
+                        # add0817
+                        print(BACK, BACK2, bf, prev_state)
+                        # BACK =True
                         # BACK2 =True
+                        bf = True
                         
                         continue # add 0807
                 
@@ -1032,7 +1284,7 @@ def main():
                         print("TRIGAR2:{}".format(TRIGAR2))
                         STATE_HISTORY.append(state)
                         TRIGAR = True
-                        BACK =True # add0815
+                        # BACK =True # add0815
                         # BACK2 = True # add0815
 
                         ##############################
@@ -1041,23 +1293,32 @@ def main():
                         # print("TEST STATE:{}, BPLIST:{}".format(state, BPLIST))
                         length = len(BPLIST)
                         print("len={}".format(length))
+                        
+                        
+                        # 何をしている？0817
                         for test in range (length):
                             print("0815")
+                            print("######################### 0817 ###############################")
                             
                             if BPLIST[(length-1)-test].row >= state.row:
                                 BPLIST.insert((length-1)-test+1,state)
-                                
+                                ADD2 = True
                                 break
-                        
-                        
-                        
-                        
                         # add0816
                         if length == 1:
                             BPLIST.insert((length-1)+1,state)
+                            ADD2 = True
                         elif length == 0:
+                            ADD2 = True
                             BPLIST.append(state)
                         ##############################
+
+                        if not ADD2:
+                            print("🌝🍏0819 TEST")
+                            BPLIST.insert(0, state)
+                            OBS.insert(0, Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
+
+                        ADD2 = False
 
                         print(f"🤖 State:{state}")
                         COUNT += 1
@@ -1065,62 +1326,133 @@ def main():
                         bf = True
                         print("OBS 分岐!!!!!: {}".format(OBS))
                         print("📂 Storage BRANCH {}".format(BPLIST))
-                        continue
+                        if length == 0:
+                            pass
+                        else:
+                            continue # コメントアウト 0817 ここでcontinueすることで、分岐終了時にその場に止まって次の位置を決める為に必要
                     else:
                         TRIGAR = False
 
                         # if NODELIST[state.row][state.column] == 1:
                         if NODELIST[state.row][state.column] > 0.0:
+                            
+                            print("🪧 NODE : ⭕️")                                # add0820
+                            # if NODE_COUNT[state.row][state.column] < 1:
+                            if NODE_COUNT[state.row][state.column] < 1 or TURNING_POINT[state.row][state.column] == 1: # < 2: # 1回目の時は　BPLIST に追加
+                                print("初めて観測")
 
-                            print("Observation : {}".format(Observation))
-                            # OBS.append(Observation[state.row][state.column])
-                            # print("OBS 分岐!!!!!: {}".format(OBS))
+                                if TURNING_POINT[state.row][state.column] == 1: # add0820
+                                    print("TURNING POINT 🚦 🚦 🚦")
+                                
+                                print("Observation : {}".format(Observation))
+                                # OBS.append(Observation[state.row][state.column])
+                                # print("OBS 分岐!!!!!: {}".format(OBS))
 
 
-                            print("🪧NODE : ⭕️")
-                            #####################################
-                            STATE_HISTORY.append(state) # add0726
-                            #####################################
-                            print("0815 TEST!!!!!!!!!")
-                            print("📂 Storage BRANCH {}".format(BPLIST))
-                            try: # add0815
-                                if BPLIST[-1].row == state.row:
-                                    BPLIST.append(state)
-                                    # OBS.append(Observation[state.row][state.column])
-                                    # print("OBS 分岐 if True: {}".format(OBS))
-
-                                    
-                                else:
-                                    print("0815 TEST branch!!!!!!!!!")
-                                    length = len(BPLIST)
-                                    print("len={}".format(length))
-                                    print("OBS 分岐!!!!! 0816: {}".format(OBS))
-                                    for test in range (length):
-                                        print("0815")
-                                        # if BPLIST[(length-1)-test].row == state.row:
-                                        if BPLIST[(length-1)-test].row >= state.row:
-                                            print("0816")
-                                            BPLIST.insert((length-1)-test+1,state)
-                                            OBS.insert((length-1)-test+1,Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
-                                            
-                                            save = (length -1) - test + 1
-                                            save_trigar = True
-                                            break
-
-                                    # add0816
-                                    if length == 1:
-                                        BPLIST.insert((length-1)+1,state)
-                                    elif length == 0:
-                                        BPLIST.append(state)
-                                    print("OBS 分岐!!!!! 0816: {}".format(OBS))
-
+                                # print("🪧NODE : ⭕️")
+                                #####################################
+                                # STATE_HISTORY.append(state) # add0726
+                                #####################################
+                                print("0815 TEST!!!!!!!!!")
                                 print("📂 Storage BRANCH {}".format(BPLIST))
-                            except:
-                                print("0815 終了")
-                                # break
-                                pass
+
+
+                                # add0819
+
+
+
+
+
+
+
+
+
+
+                                
+                                try: # add0815
+                                    if BPLIST[-1].row == state.row:
+                                        BPLIST.append(state)
+                                        # OBS.append(Observation[state.row][state.column])
+                                        # print("OBS 分岐 if True: {}".format(OBS))
+
+                                        
+                                    else:
+                                        print("0815 TEST branch!!!!!!!!!")
+                                        length = len(BPLIST)
+                                        print("len={}".format(length))
+                                        print("OBS 分岐!!!!! 0816: {}".format(OBS))
+                                        print("📂 Storage BRANCH {}".format(BPLIST))
+                                        for test in range (length):
+                                            print("0815")
+                                            # if BPLIST[(length-1)-test].row == state.row:
+                                            if BPLIST[(length-1)-test].row >= state.row:
+                                                print("0816")
+                                                BPLIST.insert((length-1)-test+1,state)
+                                                OBS.insert((length-1)-test+1,Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
+                                                
+                                                save = (length -1) - test + 1
+                                                save_trigar = True
+
+
+                                                # add0818
+                                                ADD = True
+
+                                                print("🌝 🌝 🌝")
+                                                break
+
+                                            # add0818 下に移動↓
+                                            # else:
+
+                                        # print("ADD : {}".format(ADD))
+                                        # print("📂 Storage BRANCH {}".format(BPLIST))
+                                        # if not ADD:
+                                        #     print("🌝0817 TEST")
+                                        #     BPLIST.insert(0, state)
+                                        #     OBS.insert(0, Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
+                                            
+                                        #     # save = (length -1) - test + 1
+                                        #     # save_trigar = True
+                                        #     # break
+                                        
+                                        # ADD = False
+
+                                        ###############
+
+                                        # add0816
+                                        if length == 1:
+                                            BPLIST.insert((length-1)+1,state)
+                                            OBS.insert((length-1)+1,Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
+                                            ADD = True
+                                        elif length == 0:
+                                            BPLIST.append(state)
+                                            OBS.append(Observation[state.row][state.column])
+                                            ADD = True
+                                        print("OBS 分岐!!!!! 0816 0817: {}".format(OBS))
+
+                                        # add0817
+                                        print("ADD : {}".format(ADD))
+                                        print("📂 Storage BRANCH {}".format(BPLIST))
+                                        if not ADD:
+                                            print("🌝0817 TEST")
+                                            BPLIST.insert(0, state)
+                                            OBS.insert(0, Observation[state.row][state.column])  # -2 は w or obs で[2, 0] を削除してない時
+                                            
+                                            # save = (length -1) - test + 1
+                                            # save_trigar = True
+                                            # break
+                                        
+                                        ADD = False
+
+                                        ###############
+
+                                    print("📂 Storage BRANCH {}".format(BPLIST))
+                                except:
+                                    print("0815 終了")
+                                    # break
+                                    pass
 
                             print(f"📂Storage:{BPLIST}")
+                            STATE_HISTORY.append(state) # add0819
                             STATE_HISTORY.append(state)
                             
                             ############################
@@ -1159,7 +1491,7 @@ def main():
             state = next_state
             
             COUNT += 1
-            if COUNT > 50:
+            if COUNT > 100:
                 break
             
         # print(f"data = {data}")

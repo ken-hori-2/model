@@ -13,6 +13,10 @@ from torch import t
 # Env_bp/Env_model_prob_bp_2_Edit(match+cost).py の整理ver.
 # model.py の整理ver.
 
+# model_edit.py の分岐アリver.
+
+# たぶんこれが、分岐を探索するだけで、BPLISTには保存しないデフォルト
+
 
 class State():
 

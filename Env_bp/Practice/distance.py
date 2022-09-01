@@ -53,7 +53,9 @@ def get_distance(x1, y1, x2, y2):
 if __name__ == '__main__':
     # x1, y1, x2, y2 = 1.0, 2.0, 2.0, 3.0
     BPLIST = [[5, 0], [4, 0], [3, 0], [2, 0], [2, 1], [2, 2], [2, 3], [1, 0]]
+    BPLIST = [[5, 0], [4, 0], [3, 0], [2, 0], [2, 1], [2, 2], [2, 3], [1, 0], [1, 2]]
     bpindex = BPLIST.index([2, 3])
+    bpindex = BPLIST.index([1, 2])
     # print(BPLIST[bpindex][0])
     # print(BPLIST[bpindex][1])
     # print(BPLIST[0][0])
