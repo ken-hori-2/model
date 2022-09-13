@@ -3,6 +3,8 @@ from enum import Enum
 import random
 # test.py
 
+# State と Action を追加
+
 
 class State():
 

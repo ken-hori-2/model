@@ -25,6 +25,8 @@ import math
 
 # これが、分岐先もBPLISTに追加する最新ver. の整理ver. (0817)
 
+# Edit_Model.py -> agentの行動決定のアルゴリズムを考えるために必要最低限にしたver.
+
 
 class State():
 

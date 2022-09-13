@@ -2,7 +2,7 @@ from enum import Enum
 
 import random
 # test.py
-# agent_Edit.py
+# agent_Edit.py と同じ
 
 
 class State():
